@@ -1,0 +1,33 @@
+services:
+  vanity:
+    build: ./vanity/
+    container_name: go.opentelemetry.io
+    environment:
+      - PORT=80
+    networks:
+      - my_app_network
+  proxy:
+    build: ./goproxy/
+    container_name: goproxy.opentelemetry.io
+    networks:
+      - my_app_network
+  client:
+    image: golang:latest
+    depends_on:
+      - proxy
+      - vanity
+    environment:
+      - GOPROXY=direct
+      # TODO: figure out how to not ignore this.
+      - GONOSUMDB="*go.opentelemetry.io"
+      # TODO: support HTTPS
+      - GOINSECURE="go.opentelemetry.io/*"
+    volumes:
+      - ./client:/go/src/app
+    working_dir: /go/src/app
+    command: go mod tidy -x && go run .
+    networks:
+      - my_app_network
+networks:
+  my_app_network:
+    driver: bridge
