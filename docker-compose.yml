@@ -17,15 +17,15 @@ services:
       - proxy
       - vanity
     environment:
-      - GOPROXY=direct
+      GOPROXY: direct
       # TODO: figure out how to not ignore this.
-      - GONOSUMDB="*go.opentelemetry.io"
+      GONOSUMDB: "*go.opentelemetry.io"
       # TODO: support HTTPS
-      - GOINSECURE="go.opentelemetry.io/*"
+      GOINSECURE: "go.opentelemetry.io/*"
     volumes:
       - ./client:/go/src/app
     working_dir: /go/src/app
-    command: go mod tidy -x && go run .
+    command: /bin/sh -c 'go mod tidy && go run .'
     networks:
       - my_app_network
 networks:
