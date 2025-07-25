@@ -39,17 +39,26 @@ All other modules requested from the module proxy are treated as pass-through re
 ### Running
 
 ```shell
-docker-compose up -d
+$ docker-compose up
+[+] Running 4/4
+ ✔ Network bpfgenproxy_my_app_network  Created                                                                                                                           0.1s
+ ✔ Container goproxy.opentelemetry.io  Created                                                                                                                           0.1s
+ ✔ Container go.opentelemetry.io       Created                                                                                                                           0.1s
+ ✔ Container bpfgenproxy-client-1      Created                                                                                                                           0.0s
+Attaching to client-1, go.opentelemetry.io, goproxy.opentelemetry.io
+client-1                  | go: downloading go.opentelemetry.io/auto v0.22.1
+goproxy.opentelemetry.io  | time=2025-07-25T16:47:52.735Z level=DEBUG source=/app/main.go:50 msg=Downloading Fetcher.path=go.opentelemetry.io/auto Fetcher.version=v0.22.1
+goproxy.opentelemetry.io  | time=2025-07-25T16:47:52.735Z level=DEBUG source=/app/main.go:52 msg="Serving local files for go.opentelemetry.io/auto v0.22.1"
+# [...] 
+client-1                  | 2025/07/25 16:49:14 failed to create instrumentation: invalid ID: -1
+client-1                  | exit status 1
+client-1 exited with code 1
 ```
-
-### Inspect
 
 The logs of the client and module proxy show the requests being made.
-
-```shell
-docker-compose logs
-
-```
+The client will fail to run because the target PID for the instrumentation is invalid.
+However, it is important to note that the module was successfully downloaded and it started, meaning the proxy served the module packaged with the eBPF object files correctly.
+If the eBPF object files were not present, we would have seen an error like `pattern bpf_x86_bpfel.o: no matching files found` when the client tried to run.
 
 ### Clean Up
 
