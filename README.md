@@ -2,6 +2,8 @@
 
 Proof-of-concept running a Go module proxy to serve eBPF object files dynamically.
 
+This is part of the evaluation for [OpenTelemetry eBPF Auto Instrumentation](https://github.com/open-telemetry/opentelemetry-go-instrumentation/issues/1233)
+
 ## Architecture Diagram
 
 ```diagram
