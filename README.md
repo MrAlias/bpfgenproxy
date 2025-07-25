@@ -65,3 +65,37 @@ If the eBPF object files were not present, we would have seen an error like `pat
 ```shell
 docker-compose down
 ```
+
+## Next Steps
+
+This is a proof-of-concept implementation.
+
+The next steps would be to:
+
+- Add a way to generate the eBPF object files dynamically based on the module version (don't just serve static zip files).
+- Add a way to generate the `go.mod` and `go.sum` files dynamically based on the module version.
+
+## Takeaways
+
+### This will be an attack vector
+
+We are dynamically generating content for Go modules that is not present in the upstream repository.
+This is an attack vector for malicious actors to exploit.
+
+We do not review the content of the modules served by the module proxy.
+If a malicious actor were to upload/generate a module with malicious eBPF object files, it could lead to security vulnerabilities in the systems that use this proxy.
+
+### The `go.sum` file
+
+The `go.sum` file is used to verify the integrity of the downloaded modules.
+It contains checksums for each module version, ensuring that the content has not been tampered with.
+This is crucial for security.
+
+All modules served by the module proxy are generated dynamically.
+They are guaranteed to be different from the upstream Go proxy given they contain the additional eBPF object files.
+
+That means that the `go.sum` file will not match the checksums of the modules served by the upstream Go proxy if the VCS system was originally used.
+Consequently, this means that we will only ever be able to serve modules that are not already present in the upstream Go proxy without causing security errors in the Go client.
+
+Additionally, this means that we need ways to retain all generated zip files in the module proxy in a reliable way.
+If they are not retained, and regenerated, there is significant chance the hash will change and cause security errors in the Go client.
