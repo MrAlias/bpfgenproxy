@@ -83,7 +83,7 @@ We are dynamically generating content for Go modules that is not present in the 
 This is an attack vector for malicious actors to exploit.
 
 We do not review the content of the modules served by the module proxy.
-If a malicious actor were to upload/generate a module with malicious eBPF object files, it could lead to security vulnerabilities in the systems that use this proxy.
+If a malicious actor were to upload/generate a module with malicious code, it could compromise the systems that use this proxy (i.e. all of our direct and indirect users).
 
 ### The `go.sum` file
 
